@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-
 import 'contact_bloc/contact_cubit.dart';
 
 final contacts = ContactCubit();
@@ -38,7 +37,7 @@ class Home extends StatelessWidget {
           appBar: AppBar(title: const Text("Contacts"),),
           body: Stack(
             children: [
-              if(state.cubitState != StatesCubit.error) ListView.builder(
+              if(state is! ErrorContactState) ListView.builder(
                 padding: const EdgeInsets.all(20),
                 itemCount: state.contacts.length,
                 itemBuilder: (context, index) {
@@ -53,12 +52,12 @@ class Home extends StatelessWidget {
                 },
               ),
 
-              if(state.cubitState == StatesCubit.loading) const Center(
+              if(state is LoadingContactState) const Center(
                 child: CircularProgressIndicator(),
               ),
 
-              if(state.cubitState == StatesCubit.error) Center(
-                child: Text(state.message!),
+              if(state is ErrorContactState) Center(
+                child: Text(state.message),
               ),
             ],
           ),
