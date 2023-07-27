@@ -8,12 +8,12 @@ class ContactState {
   final StatesCubit cubitState;
   final String? message;
 
-  const ContactState._(
+  const ContactState(
       {this.contacts = const [],
       this.cubitState = StatesCubit.initial,
       this.message});
 
-  factory ContactState.initial({List<Contact> contacts = const []}) =>
+  /*factory ContactState.initial({List<Contact> contacts = const []}) =>
       ContactState._(contacts: contacts, cubitState: StatesCubit.initial);
 
   factory ContactState.loading({required List<Contact> contacts}) =>
@@ -23,18 +23,18 @@ class ContactState {
       ContactState._(message: message, contacts: contacts, cubitState: StatesCubit.error);
 
   factory ContactState.loaded({required List<Contact> contacts}) =>
-      ContactState._(contacts: contacts, cubitState: StatesCubit.loaded);
+      ContactState._(contacts: contacts, cubitState: StatesCubit.loaded);*/
 
-  /*ContactState copyWith({
+  ContactState copyWith({
     List<Contact>? contacts,
     StatesCubit? cubitState,
     String? message,
   }) =>
-      ContactState._(
+      ContactState(
         contacts: contacts ?? this.contacts,
         cubitState: cubitState ?? this.cubitState,
         message: message ?? this.message,
-      );*/
+      );
 }
 
 enum StatesCubit {
@@ -46,18 +46,18 @@ enum StatesCubit {
 
 /// cubit
 class ContactCubit extends Cubit<ContactState> {
-  ContactCubit() : super(ContactState.initial());
+  ContactCubit() : super(const ContactState());
 
   void addContact() {}
 
   void readContact() async {
-    emit(ContactState.loading(contacts: state.contacts));
+    emit(state.copyWith(cubitState: StatesCubit.loading));
     final json = await Network.methodGet(api: Network.apiContacts);
     if (json != null) {
       final list = Network.parseContact(json);
-      emit(ContactState.loaded(contacts: list));
+      emit(state.copyWith(contacts: list, cubitState: StatesCubit.loaded));
     } else {
-      emit( ContactState.error(message: "Something Error", contacts: state.contacts));
+      emit(state.copyWith(message: "Something Error", contacts: state.contacts, cubitState: StatesCubit.error));
     }
   }
 }
