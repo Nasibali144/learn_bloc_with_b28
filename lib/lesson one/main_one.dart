@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'contact_cubit.dart';
+
+import 'contact_bloc/contact_cubit.dart';
 
 final contacts = ContactCubit();
 
