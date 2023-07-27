@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-
 import 'contact_model.dart';
-
 
 sealed class Network {
   static const String baseUrl = "64bd50f62320b36433c79a2c.mockapi.io";
@@ -21,7 +19,7 @@ sealed class Network {
       final response = await http.get(url, headers: headers);
       if(response.statusCode == 200) {
         // return response.body;
-        // return utf8.decoder.convert(response.bodyBytes);
+        return utf8.decoder.convert(response.bodyBytes);
       }
     } catch(e) {
       return null;

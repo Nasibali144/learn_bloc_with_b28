@@ -37,7 +37,7 @@ class Home extends StatelessWidget {
           appBar: AppBar(title: const Text("Contacts"),),
           body: Stack(
             children: [
-              if(state is! ErrorContactState) ListView.builder(
+              if(state.cubitState != StatesCubit.error) ListView.builder(
                 padding: const EdgeInsets.all(20),
                 itemCount: state.contacts.length,
                 itemBuilder: (context, index) {
@@ -52,12 +52,12 @@ class Home extends StatelessWidget {
                 },
               ),
 
-              if(state is LoadingContactState) const Center(
+              if(state.cubitState == StatesCubit.loading) const Center(
                 child: CircularProgressIndicator(),
               ),
 
-              if(state is ErrorContactState) Center(
-                child: Text(state.message),
+              if(state.cubitState == StatesCubit.error) Center(
+                child: Text(state.message!),
               ),
             ],
           ),

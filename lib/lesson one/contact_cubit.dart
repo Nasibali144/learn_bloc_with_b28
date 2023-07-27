@@ -3,45 +3,61 @@ import 'package:learn_bloc_with_b28/lesson%20one/network_service.dart';
 
 import 'contact_model.dart';
 
-/// state
-abstract class ContactState {
+class ContactState {
   final List<Contact> contacts;
-  final Status status;
+  final StatesCubit cubitState;
+  final String? message;
 
-  const ContactState({this.status = Status.read, this.contacts = const <Contact>[]});
+  const ContactState._(
+      {this.contacts = const [],
+      this.cubitState = StatesCubit.initial,
+      this.message});
+
+  factory ContactState.initial({List<Contact> contacts = const []}) =>
+      ContactState._(contacts: contacts, cubitState: StatesCubit.initial);
+
+  factory ContactState.loading({required List<Contact> contacts}) =>
+      ContactState._(contacts: contacts, cubitState: StatesCubit.loading);
+
+  factory ContactState.error({required String message, List<Contact> contacts = const []}) =>
+      ContactState._(message: message, contacts: contacts, cubitState: StatesCubit.error);
+
+  factory ContactState.loaded({required List<Contact> contacts}) =>
+      ContactState._(contacts: contacts, cubitState: StatesCubit.loaded);
+
+  /*ContactState copyWith({
+    List<Contact>? contacts,
+    StatesCubit? cubitState,
+    String? message,
+  }) =>
+      ContactState._(
+        contacts: contacts ?? this.contacts,
+        cubitState: cubitState ?? this.cubitState,
+        message: message ?? this.message,
+      );*/
 }
 
-class InitialContactState extends ContactState {
-  const InitialContactState();
-}
-
-class LoadingContactState extends ContactState {
-  const LoadingContactState();
-}
-
-class ErrorContactState extends ContactState {
-  final String message;
-  const ErrorContactState(this.message);
-}
-
-class LoadedContactState extends ContactState {
-  const LoadedContactState({required super.contacts, super.status});
+enum StatesCubit {
+  initial,
+  loading,
+  loaded,
+  error,
 }
 
 /// cubit
 class ContactCubit extends Cubit<ContactState> {
-  ContactCubit(): super(const InitialContactState());
+  ContactCubit() : super(ContactState.initial());
 
   void addContact() {}
 
   void readContact() async {
-    emit(const LoadingContactState());
+    emit(ContactState.loading(contacts: state.contacts));
     final json = await Network.methodGet(api: Network.apiContacts);
-    if(json != null) {
+    if (json != null) {
       final list = Network.parseContact(json);
-      emit(LoadedContactState(contacts: list));
+      emit(ContactState.loaded(contacts: list));
     } else {
-      emit(const ErrorContactState("Some thing error"));
+      emit( ContactState.error(message: "Something Error", contacts: state.contacts));
     }
   }
 }
