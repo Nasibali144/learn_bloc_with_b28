@@ -29,5 +29,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       // emit(PostLoaded(posts: state.posts, message: "Successfully deleted"));
       add(FetchPostsEvent());
     });
+
+    on<UpdatePostEvent>((event, emit) => null);
+
+    on<CreatePostEvent>((event, emit) => null);
   }
 }

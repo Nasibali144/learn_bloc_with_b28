@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/blocs/post_bloc.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/core/service_locator.dart';
 
@@ -31,18 +32,17 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Post App"),
       ),
-      body: StreamBuilder<PostState>(
-        initialData: bloc.state,
-        stream: bloc.stream,
-        builder: (_, snapshot) {
+      body: BlocBuilder<PostBloc, PostState>(
+        bloc: bloc,
+        builder: (context, state) {
           return Stack(
             children: [
               /// all state
               ListView.builder(
                 padding: const EdgeInsets.all(20),
-                itemCount: bloc.state.posts.length,
+                itemCount: state.posts.length,
                 itemBuilder: (context, index) {
-                  final post = bloc.state.posts[index];
+                  final post = state.posts[index];
                   return Card(
                     child: ListTile(
                       leading: ClipRRect(
@@ -63,7 +63,7 @@ class Home extends StatelessWidget {
               ),
 
               /// loading
-              if (bloc.state is PostLoading)
+              if (state is PostLoading)
                 const Center(
                   child: CircularProgressIndicator(),
                 ),
