@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/blocs/post_bloc.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/core/service_locator.dart';
@@ -9,13 +10,23 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (bloc.state is PostError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text((bloc.state as PostError).message),
-        ),
-      );
-    }
+    bloc.stream.listen((state) {
+      if (state is PostError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text((bloc.state as PostError).message),
+          ),
+        );
+      }
+
+      if (state is PostLoaded && state.message != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text((bloc.state as PostLoaded).message!),
+          ),
+        );
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text("Post App"),
@@ -23,7 +34,7 @@ class Home extends StatelessWidget {
       body: StreamBuilder<PostState>(
         initialData: bloc.state,
         stream: bloc.stream,
-        builder: (context, snapshot) {
+        builder: (_, snapshot) {
           return Stack(
             children: [
               /// all state
@@ -42,6 +53,10 @@ class Home extends StatelessWidget {
                       ),
                       title: Text(post.title),
                       subtitle: Text(post.body),
+                      trailing: IconButton(
+                        onPressed: () => bloc.add(DeletePostEvent(id: post.id)),
+                        icon: const Icon(CupertinoIcons.delete),
+                      ),
                     ),
                   );
                 },
@@ -51,7 +66,7 @@ class Home extends StatelessWidget {
               if (bloc.state is PostLoading)
                 const Center(
                   child: CircularProgressIndicator(),
-                )
+                ),
             ],
           );
         },

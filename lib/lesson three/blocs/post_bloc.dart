@@ -12,9 +12,22 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc({required this.repository}) : super(const PostInitial()) {
 
     on<FetchPostsEvent>((event, emit) async {
-      emit(const PostLoading(posts: []));
-      final list = await repository.getAllPost();
-      emit(PostLoaded(posts: list));
+      try{
+        emit(PostLoading(posts: state.posts));
+        final list = await repository.getAllPost();
+        emit(PostLoaded(posts: list));
+      } catch(e) {
+        emit(PostError(message: "Some thing error", posts: state.posts));
+      }
+    });
+
+    on<DeletePostEvent>((event, emit) async {
+      emit(PostLoading(posts: state.posts));
+      await Future.delayed(const Duration(seconds: 2));
+      repository.deletePost(event.id);
+      // state.posts.removeWhere((element) => element.id == event.id);
+      // emit(PostLoaded(posts: state.posts, message: "Successfully deleted"));
+      add(FetchPostsEvent());
     });
   }
 }
