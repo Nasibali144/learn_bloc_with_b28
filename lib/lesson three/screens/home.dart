@@ -33,6 +33,9 @@ class Home extends StatelessWidget {
         title: const Text("Post App"),
       ),
       body: BlocBuilder<PostBloc, PostState>(
+        /*buildWhen: (previous, current) {
+          return previous != current;
+        },*/
         bloc: bloc,
         builder: (context, state) {
           return Stack(
