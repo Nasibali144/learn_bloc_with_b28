@@ -11,20 +11,23 @@ class LessonFourApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<CounterSblocBloc>(
-          create: (context) {
-            final bloc = CounterSblocBloc();
-            bloc.add(CountAIncrementEvent());
-            return bloc;
-          },
-          lazy: false,
+    return RepositoryProvider<InfoRepo>(
+      create: (context) => InfoRepo(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<CounterSblocBloc>(
+            create: (context) {
+              final bloc = CounterSblocBloc();
+              bloc.add(CountAIncrementEvent());
+              return bloc;
+            },
+            lazy: false,
+          ),
+        ],
+        child: MaterialApp(
+          theme: ThemeData.light(useMaterial3: true),
+          home: const HomeCS(),
         ),
-      ],
-      child: MaterialApp(
-        theme: ThemeData.light(useMaterial3: true),
-        home: const HomeCS(),
       ),
     );
   }
@@ -49,7 +52,16 @@ class HomeCS extends StatelessWidget {
         return previous.countB != current.countB;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text("CounterS")),
+        appBar: AppBar(
+          title: const Text("CounterS"),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const InfoPage())),
+              icon: const Icon(Icons.info),
+            ),
+          ],
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -150,4 +162,35 @@ class DStatePage extends StatelessWidget {
       },
     );
   }
+}
+
+class InfoPage extends StatelessWidget {
+  const InfoPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // final repo = context.read<InfoRepo>();
+    final repo = RepositoryProvider.of<InfoRepo>(context);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(repo.data["name"]!),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(repo.data["creator"]!),
+              Text(repo.data["version"]!),
+            ],
+          ),
+        ));
+  }
+}
+
+class InfoRepo {
+  final data = {
+    "name": "Lesson Four",
+    "creator": "B28 Group Students",
+    "version": "1.0.0",
+  };
 }
