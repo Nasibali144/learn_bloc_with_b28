@@ -39,8 +39,10 @@ class HomeCS extends StatelessWidget {
 
     return BlocListener<CounterSblocBloc, CounterSblocState>(
       listener: (context, state) {
-        if(state is CounterSblocLoaded) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Count B updated, current value is ${state.countB}")));
+        if (state is CounterSblocLoaded) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content:
+                  Text("Count B updated, current value is ${state.countB}")));
         }
       },
       listenWhen: (previous, current) {
@@ -109,7 +111,7 @@ class HomeCS extends StatelessWidget {
             ),
 
             /// D
-            DStatePage(),
+            const DStatePage(),
           ],
         ),
       ),
@@ -118,27 +120,34 @@ class HomeCS extends StatelessWidget {
 }
 
 class DStatePage extends StatelessWidget {
-  DStatePage({Key? key}) : super(key: key);
-
-  final bloc = CounterSblocBloc();
+  const DStatePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        BlocBuilder<CounterSblocBloc, CounterSblocState>(
-          bloc: bloc,
-          builder: (context, state) {
-            return Text(
+    final bloc = BlocProvider.of<CounterSblocBloc>(context);
+    return BlocConsumer<CounterSblocBloc, CounterSblocState>(
+      bloc: bloc,
+      listener: (context, state) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text("Count D updated, current value is ${state.countD}")));
+      },
+      listenWhen: (previous, current) {
+        return previous.countD != current.countD;
+      },
+      builder: (context, state) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
                 "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
-                style: Theme.of(context).textTheme.headlineMedium);
-          },
-        ),
-        IconButton(
-            onPressed: () => bloc.add(CountDIncrementEvent()),
-            icon: const Icon(Icons.add)),
-      ],
+                style: Theme.of(context).textTheme.headlineMedium),
+            IconButton(
+                onPressed: () => bloc.add(CountDIncrementEvent()),
+                icon: const Icon(Icons.add)),
+          ],
+        );
+      },
     );
   }
 }
