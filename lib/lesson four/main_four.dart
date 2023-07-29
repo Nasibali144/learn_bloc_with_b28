@@ -13,7 +13,14 @@ class LessonFourApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CounterSblocBloc>(create: (context) => CounterSblocBloc()),
+        BlocProvider<CounterSblocBloc>(
+          create: (context) {
+            final bloc = CounterSblocBloc();
+            bloc.add(CountAIncrementEvent());
+            return bloc;
+          },
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         theme: ThemeData.light(useMaterial3: true),
