@@ -11,8 +11,10 @@ class LessonFourApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CounterSblocBloc>(
-      create: (context) => CounterSblocBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CounterSblocBloc>(create: (context) => CounterSblocBloc()),
+      ],
       child: MaterialApp(
         theme: ThemeData.light(useMaterial3: true),
         home: const HomeCS(),
@@ -23,7 +25,6 @@ class LessonFourApp extends StatelessWidget {
 
 class HomeCS extends StatelessWidget {
   const HomeCS({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -103,24 +104,24 @@ class DStatePage extends StatelessWidget {
   DStatePage({Key? key}) : super(key: key);
 
   final bloc = CounterSblocBloc();
+
   @override
   Widget build(BuildContext context) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          BlocBuilder<CounterSblocBloc, CounterSblocState>(
-            bloc: bloc,
-            builder: (context, state) {
-              return Text(
-                  "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
-                  style: Theme.of(context).textTheme.headlineMedium);
-            },
-          ),
-          IconButton(
-              onPressed: () => bloc.add(CountBIncrementEvent()),
-              icon: const Icon(Icons.add)),
-        ],
-      );
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        BlocBuilder<CounterSblocBloc, CounterSblocState>(
+          bloc: bloc,
+          builder: (context, state) {
+            return Text(
+                "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
+                style: Theme.of(context).textTheme.headlineMedium);
+          },
+        ),
+        IconButton(
+            onPressed: () => bloc.add(CountBIncrementEvent()),
+            icon: const Icon(Icons.add)),
+      ],
+    );
   }
 }
-
