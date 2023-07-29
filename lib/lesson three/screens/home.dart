@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/blocs/post_bloc.dart';
 import 'package:learn_bloc_with_b28/lesson%20three/core/service_locator.dart';
-import 'package:learn_bloc_with_b28/lesson%20three/models/post_model.dart';
 
 class Home extends StatelessWidget {
   Home({Key? key}) : super(key: key);
@@ -33,23 +32,18 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Post App"),
       ),
-      body: BlocSelector<PostBloc, PostState, List<Post>>(
-        /*buildWhen: (previous, current) {
-          return previous != current;
-        },*/
-        selector: (state) {
-          return state.posts;
-        },
-        bloc: bloc,
-        builder: (context, posts) {
+      body: StreamBuilder<PostState>(
+        stream: bloc.stream,
+        initialData: bloc.state,
+        builder: (context, snapshot) {
           return Stack(
             children: [
               /// all state
               ListView.builder(
                 padding: const EdgeInsets.all(20),
-                itemCount: posts.length,
+                itemCount: bloc.state.posts.length,
                 itemBuilder: (context, index) {
-                  final post = posts[index];
+                  final post = bloc.state.posts[index];
                   return Card(
                     child: ListTile(
                       leading: ClipRRect(
@@ -70,10 +64,10 @@ class Home extends StatelessWidget {
               ),
 
               /// loading
-              // if (state is PostLoading)
-              //   const Center(
-              //     child: CircularProgressIndicator(),
-              //   ),
+              if (bloc.state is PostLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
             ],
           );
         },

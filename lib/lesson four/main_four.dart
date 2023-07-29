@@ -37,71 +37,81 @@ class HomeCS extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<CounterSblocBloc>(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("CounterS")),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          /// A
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BlocBuilder<CounterSblocBloc, CounterSblocState>(
-                bloc: bloc,
-                builder: (context, state) {
-                  return Text(
-                      "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
-                      style: Theme.of(context).textTheme.headlineMedium);
-                },
-              ),
-              IconButton(
-                  onPressed: () => bloc.add(CountAIncrementEvent()),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
+    return BlocListener<CounterSblocBloc, CounterSblocState>(
+      listener: (context, state) {
+        if(state is CounterSblocLoaded) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Count B updated, current value is ${state.countB}")));
+        }
+      },
+      listenWhen: (previous, current) {
+        return previous.countB != current.countB;
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("CounterS")),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            /// A
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                BlocBuilder<CounterSblocBloc, CounterSblocState>(
+                  bloc: bloc,
+                  builder: (context, state) {
+                    return Text(
+                        "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
+                        style: Theme.of(context).textTheme.headlineMedium);
+                  },
+                ),
+                IconButton(
+                    onPressed: () => bloc.add(CountAIncrementEvent()),
+                    icon: const Icon(Icons.add)),
+              ],
+            ),
 
-          /// B
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BlocSelector<CounterSblocBloc, CounterSblocState, int>(
-                selector: (state) {
-                  return state.countB;
-                },
-                bloc: bloc,
-                builder: (context, countB) {
-                  return Text(
-                      "B: CounterA: ${bloc.state.countA} \nCounterB: $countB\nCounterC: ${bloc.state.countC}\nCounterD: ${bloc.state.countD}",
-                      style: Theme.of(context).textTheme.headlineMedium);
-                },
-              ),
-              IconButton(
-                  onPressed: () => bloc.add(CountBIncrementEvent()),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
+            /// B
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                BlocSelector<CounterSblocBloc, CounterSblocState, int>(
+                  selector: (state) {
+                    return state.countB;
+                  },
+                  bloc: bloc,
+                  builder: (context, countB) {
+                    return Text(
+                        "B: CounterA: ${bloc.state.countA} \nCounterB: $countB\nCounterC: ${bloc.state.countC}\nCounterD: ${bloc.state.countD}",
+                        style: Theme.of(context).textTheme.headlineMedium);
+                  },
+                ),
+                IconButton(
+                    onPressed: () => bloc.add(CountBIncrementEvent()),
+                    icon: const Icon(Icons.add)),
+              ],
+            ),
 
-          /// C
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BlocBuilder<CounterSblocBloc, CounterSblocState>(
-                bloc: bloc,
-                builder: (context, state) {
-                  return Text(
-                      "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
-                      style: Theme.of(context).textTheme.headlineMedium);
-                },
-              ),
-              IconButton(
-                  onPressed: () => bloc.add(CountBIncrementEvent()),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
+            /// C
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                BlocBuilder<CounterSblocBloc, CounterSblocState>(
+                  bloc: bloc,
+                  builder: (context, state) {
+                    return Text(
+                        "A: CounterA: ${state.countA} \nCounterB: ${state.countB}\nCounterC: ${state.countC}\nCounterD: ${state.countD}",
+                        style: Theme.of(context).textTheme.headlineMedium);
+                  },
+                ),
+                IconButton(
+                    onPressed: () => bloc.add(CountCIncrementEvent()),
+                    icon: const Icon(Icons.add)),
+              ],
+            ),
 
-          /// D
-          DStatePage(),
-        ],
+            /// D
+            DStatePage(),
+          ],
+        ),
       ),
     );
   }
@@ -126,7 +136,7 @@ class DStatePage extends StatelessWidget {
           },
         ),
         IconButton(
-            onPressed: () => bloc.add(CountBIncrementEvent()),
+            onPressed: () => bloc.add(CountDIncrementEvent()),
             icon: const Icon(Icons.add)),
       ],
     );
